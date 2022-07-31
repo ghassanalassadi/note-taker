@@ -1,4 +1,3 @@
-const { json } = require("express");
 const express = require("express");
 const fs = require("fs");
 const path = require('path');
@@ -18,7 +17,7 @@ app.get('/notes', (req, res) => {
 });
 
 app.get('/api/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, "/db/db.json"));
+    res.sendFile(path.join(__dirname, './db/db.json'));
 });
 
 app.get('*', (req, res) => {
@@ -31,7 +30,7 @@ app.post('/api/notes', (req, res) => {
         const newNote = {
             title,
             text,
-            note_id: uuid(),
+            id: uuid(),
         };
 
         fs.readFile('./db/db.json', 'utf-8', (err, data) => {
@@ -41,7 +40,13 @@ app.post('/api/notes', (req, res) => {
                 const parsedNotes = JSON.parse(data);
                 parsedNotes.push(newNote);
 
-                fs.writeFile('./db/db.json', JSON.stringify(parsedNotes, null, 4), (writeErr) => writeErr ? console.error(writeErr) : console.info('Successfully added note!'));
+                fs.writeFile('./db/db.json', JSON.stringify(parsedNotes, null, 4), (err) => {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        console.info('Note saved successfully.')
+                    }
+                })
             }
         })
 
@@ -57,8 +62,24 @@ app.post('/api/notes', (req, res) => {
     }
 });
 
-app.delete('/notes/api/:note_id', (req, res) => {
-    
+// deleting notes
+app.delete('/api/notes/:id', (req, res) => {
+    const noteId = req.params.id;
+    fs.readFile('./db/db.json', 'utf-8', (err, data) => {
+        if (err) {
+            console.error(err);
+        } else {
+            const notes = JSON.parse(data);
+            const deleteNotes = notes.filter((note) => note.id !== noteId);
+            fs.writeFile('./db/db.json', JSON.stringify(deleteNotes, null, 4), (err) => {
+                if (err) {
+                    console.error(err)
+                } else {
+                    console.info('Note successfully deleted.')
+                }
+            })
+        }
+    })
 });
 
 app.listen(PORT, () => {
