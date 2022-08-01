@@ -12,7 +12,7 @@ This application is a note taker. It takes two inputs from the user: the note ti
 To use this application, simply visit the Heroku deployment <a href='https://note-taker-by-ghassan.herokuapp.com/notes'>here</a>.
 
 ## Known Issues
-- When deleting a note, it will not immediately disappear from the note list. Refreshing the page, however, will remove the note from the list.
+- When deleting a note, the page does not update and the note will not immediately disappear from the note list, but it will be removed from the json file. Refreshing the page, however, will update the page and remove the note from the list.
 
 ## Demo
 <img src="./assets/imageOne.png">
